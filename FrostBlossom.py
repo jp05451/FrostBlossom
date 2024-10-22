@@ -10,7 +10,9 @@ class vector:
         self.length = length
 
     def getEnd(self):
-        return self.x + self.length * math.cos(math.radians(self.angle)), self.y + self.length * math.sin(math.radians(self.angle))
+        return self.x + self.length * math.cos(
+            math.radians(self.angle)
+        ), self.y + self.length * math.sin(math.radians(self.angle))
 
     def begin(self):
         return self.x, self.y
@@ -36,20 +38,20 @@ class vector:
 
 
 class FrostBlossom:
-    def __init__(self):
+    def __init__(self, level=3):
         self.screen = turtle.Screen()
         self.screen.bgcolor("white")
         self.screen.title("FrostBlossom")
-        self.screen.setup(width=600, height=600)
-        # self.screen.tracer(0)
+        self.screen.setup(width=1920, height=1080)
+        self.screen.tracer(0)
         self.pen = turtle.Turtle()
         self.pen.speed(1)
-        
-        # self.level = level
+
+        self.level = level
         # self.rootCursor = (x,y)
         # self.length = length
 
-    def drawVector(self,v:vector):
+    def drawVector(self, v: vector):
         self.pen.penup()
         self.pen.goto(v.begin())
         self.pen.pendown()
@@ -58,30 +60,26 @@ class FrostBlossom:
 
     def drawLine(self, beginXY: tuple, targetXY: tuple):
         self.pen.penup()
-        self.pen.goto(beginXY[0],beginXY[1])
+        self.pen.goto(beginXY[0], beginXY[1])
         self.pen.pendown()
-        self.pen.goto(targetXY[0],targetXY[1])
+        self.pen.goto(targetXY[0], targetXY[1])
         self.pen.penup()
 
     def drawTree(self, beginCursor, angle, length, level):
-        if level == 0:
+        if level == self.level:
             return
         else:
-            if level == 1:
-                pass
-            tempV = vector(beginCursor[0],beginCursor[1],length,angle)
+            tempV = vector(beginCursor[0], beginCursor[1], length, angle)
             self.drawVector(tempV)
             endCursor = tempV.getEnd()
-            
-            self.drawTree(endCursor,angle+60,length*0.5,level-1)
-            self.drawTree(endCursor, angle - 60, length * 0.5, level - 1)
-            
-            
+
+            self.drawTree(endCursor, angle + 60, length * 0.5, level +1)
+            self.drawTree(endCursor, angle - 60, length * 0.5, level +1)
 
 
 if __name__ == "__main__":
-    F = FrostBlossom(0, 0, 200, 90)
-    
-    
-    F.drawTree((0, 0), 30, 200,4)
+    F = FrostBlossom(3)
+
+    for i in range(0,360,60):
+        F.drawTree((0, 0), i, 200, 0)
     turtle.done()
