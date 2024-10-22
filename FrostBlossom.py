@@ -1,8 +1,38 @@
-# import pygame
-# from pygame.locals import QUIT
-
 import turtle
 import math
+
+
+class vector:
+    def __init__(self, x=0, y=0, length=1, angle=0):
+        self.x = x
+        self.y = y
+        self.angle = angle % 360
+        self.length = length
+
+    def getEnd(self):
+        return self.x + self.length * math.cos(math.radians(self.angle)), self.y + self.length * math.sin(math.radians(self.angle))
+
+    def begin(self):
+        return self.x, self.y
+
+    def rotate(self, angle):
+        self.angle += angle
+        self.angle %= 360
+
+    def scale(self, scale):
+        self.length *= scale
+
+    def move(self, x, y):
+        self.x += x
+        self.y += y
+
+    def moveTo(self, x, y):
+        self.x = x
+        self.y = y
+
+    def setAngle(self, angle):
+        self.angle = angle
+        self.angle %= 360
 
 
 class FrostBlossom:
@@ -13,51 +43,45 @@ class FrostBlossom:
         self.screen.setup(width=600, height=600)
         # self.screen.tracer(0)
         self.pen = turtle.Turtle()
-        self.H = 20
+        self.pen.speed(1)
+        
+        # self.level = level
+        # self.rootCursor = (x,y)
+        # self.length = length
 
-    def calculateVector(self, beginXY, length, angle):
-        """
-        input begin cursor
-        output cursor after move length with angle
-        """
-        x = length * math.cos(angle) + beginXY[0]
-        y = length * math.sin(angle) + beginXY[1]
-        return x, y
-
-    def scaleVector(self, beginXY, targetXY, scale):
-        # input xy cursor
-        # output xy cursor after rescale
-        x = beginXY[0] + (targetXY[0] - beginXY[0]) * scale
-        y = beginXY[1] + (targetXY[1] - beginXY[1]) * scale
-        return x, y
-
-    def vectorRotate(self, centerXY: tuple, rotateXY: tuple, angle: float) -> tuple:
-        x = rotateXY[0] - centerXY[0]
-        y = rotateXY[1] - centerXY[1]
-        x1 = x * math.cos(angle) - y * math.sin(angle) + centerXY[0]
-        y1 = x * math.sin(angle) + y * math.cos(angle) + centerXY[1]
-        return x1, y1
+    def drawVector(self,v:vector):
+        self.pen.penup()
+        self.pen.goto(v.begin())
+        self.pen.pendown()
+        self.pen.goto(v.getEnd())
+        self.pen.penup()
 
     def drawLine(self, beginXY: tuple, targetXY: tuple):
         self.pen.penup()
-        self.pen.goto(beginXY)
+        self.pen.goto(beginXY[0],beginXY[1])
         self.pen.pendown()
-        self.pen.goto(targetXY)
+        self.pen.goto(targetXY[0],targetXY[1])
         self.pen.penup()
 
-    def drawTree(self, beginCursor, beginAngle, length, level):
+    def drawTree(self, beginCursor, angle, length, level):
         if level == 0:
             return
         else:
-            x, y = self.calculateVector(beginCursor, beginAngle, 1)
+            if level == 1:
+                pass
+            tempV = vector(beginCursor[0],beginCursor[1],length,angle)
+            self.drawVector(tempV)
+            endCursor = tempV.getEnd()
+            
+            self.drawTree(endCursor,angle+60,length*0.5,level-1)
+            self.drawTree(endCursor, angle - 60, length * 0.5, level - 1)
+            
+            
 
 
 if __name__ == "__main__":
-    F = FrostBlossom()
-    x, y = (100, 0)
-    F.drawTree((0, 0), (x, y))
-    x, y = F.vectorRotate((0, 0), (x, y), 50)
-    F.drawTree((0, 0), (x, y))
-    x, y = F.vectorRotate((0, 0), (x, y), 50)
-    F.drawTree((0, 0), (x, y))
+    F = FrostBlossom(0, 0, 200, 90)
+    
+    
+    F.drawTree((0, 0), 30, 200,4)
     turtle.done()
