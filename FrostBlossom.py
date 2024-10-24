@@ -41,17 +41,18 @@ class vector:
 class FrostBlossom:
     def __init__(self, level=3):
         self.screen = turtle.Screen()
-        self.screen.bgcolor("white")
+        self.screen.bgcolor("black")
         self.screen.title("FrostBlossom")
         self.screen.setup(width=1920, height=1080)
         self.screen.tracer(0)
 
         self.pen = turtle.Turtle()
+        self.pen.hideturtle()
         self.pen.speed(1)
         self.pen.pencolor((55 / 255, 155 / 255, 255 / 255))
 
         self.level = level
-        self.centerCursor = CenterCursor
+        self.currentLevel = 0
 
     def drawVector(self, v: vector):
         self.pen.penup()
@@ -81,11 +82,12 @@ class FrostBlossom:
         self.pen.width(1)
         self.pen.color(color)
 
-    def changeColor(self):
-        color = self.pen.pencolor()
-        r = min(int(color[0]) * 255 + 40, 255) / 255
-        g = min(int(color[1]) * 255 + 20, 255) / 255
-        b = int(color[2])
+    def changeColor(self,level):
+
+        r = min(55 + 40 * level, 255) / 255
+        g = min(155 + 20 * level, 255) / 255
+        b = 255 / 255
+        # print(f"New color: R={r * 255}, G={g * 255}, B={b * 255}")
         self.pen.pencolor((r, g, b))
 
     def drawFlower(self, centerCursor, width, radius, petalNum=6):
@@ -107,8 +109,9 @@ class FrostBlossom:
             self.drawVector(tempV)
             endCursor = tempV.getEnd()
 
-            self.changeColor()
+            self.changeColor(level)
             self.drawTree(endCursor, angle + 60, length * 0.5, level + 1)
+            self.changeColor(level)
             self.drawTree(endCursor, angle - 60, length * 0.5, level + 1)
 
         if level == 5:
