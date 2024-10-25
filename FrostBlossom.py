@@ -1,5 +1,9 @@
-import turtle
+import pygame
+from pygame import draw
 import math
+
+screenWith = 1920 * 0.8
+screenHigh = 1080 * 0.8
 
 
 class vector:
@@ -39,56 +43,71 @@ class vector:
 
 
 class FrostBlossom:
-    def __init__(self, level=3):
-        self.screen = turtle.Screen()
-        self.screen.bgcolor("black")
-        self.screen.title("FrostBlossom")
-        self.screen.setup(width=1920, height=1080)
-        self.screen.tracer(0)
-
-        self.pen = turtle.Turtle()
-        self.pen.hideturtle()
-        self.pen.speed(1)
-        self.pen.pencolor((55 / 255, 155 / 255, 255 / 255))
-
+    def __init__(self, level=3, width=1920, high=1080):
         self.level = level
         self.currentLevel = 0
+        self.penColor = (55, 155, 255)
+
+        pygame.init()
+        pygame.display.set_caption("FrostBlossom")
+        self.high = high
+        self.width = width
+        self.screen = pygame.display.set_mode((width, high))
+
+        self.tree = pygame.Surface((width, high))
+
+    # def drawButton(self, x, y, width=40, high=20):
+    #     self.button.penup()
+    #     self.button.pencolor("white")
+    #     self.button.fillcolor("white")
+    #     self.button.goto(x, y)
+    #     self.button.pendown()
+    #     self.button.begin_fill()
+    #     self.button.goto(x + width, y)
+    #     self.button.goto(x + width, y + high)
+    #     self.button.goto(x, y + high)
+    #     self.button.goto(x, y)
+    #     self.button.end_fill()
+    #     self.button.penup()
+
+    #     # Draw button text
+    #     self.button.goto(x + width / 2, y)
+    #     self.button.pendown()
+    #     self.button.pencolor("black")
+    #     self.button.write("up", align="center", font=("Arial", 16, "normal"))
+    #     self.button.penup()
+
+    #     # # Define button click area
+    #     self.screen.onclick(self.onButtonClick)
+
+    # def onButtonClick(self, x, y):
+    #     button_x, button_y = (
+    #         -self.screen.window_width() / 2 + 100,
+    #         -self.screen.window_height() / 2 + 100,
+    #     )
+    #     if button_x <= x <= button_x + 40 and button_y <= y <= button_y + 20:
+    #         self.level = (self.level + 1) % 8
+    #         print(f"Level: {self.level}")
+    #         self.pen.clear()
+    #         self.drawTree(beginCursor=(0, 0), angle=90, length=200, level=0)
+    #         self.screen.update()
 
     def drawVector(self, v: vector):
-        self.pen.penup()
-        self.pen.goto(v.begin())
-        self.pen.pendown()
-        self.pen.goto(v.getEnd())
-        self.pen.penup()
+        pygame.draw.line(self.tree, self.penColor, v.begin(), v.getEnd())
 
     def drawLine(self, beginXY: tuple, targetXY: tuple):
-        self.pen.penup()
-        self.pen.goto(beginXY[0], beginXY[1])
-        self.pen.pendown()
-        self.pen.goto(targetXY[0], targetXY[1])
-        self.pen.penup()
+        pygame.draw.line(self.tree, self.penColor, beginXY, targetXY)
 
     def drawRing(self, centerCursor, width, radius):
-        color = self.pen.pencolor()
+        color = (247, 202, 201)
+        pygame.draw.circle(self.tree, color, centerCursor, radius, width)
 
-        self.pen.penup()
-        self.pen.color((247 / 255, 202 / 255, 201 / 255))
-        self.pen.goto(centerCursor[0], centerCursor[1] - radius)
-        self.pen.width(width)
-        self.pen.pendown()
-        self.pen.circle(radius)
-        self.pen.penup()
-
-        self.pen.width(1)
-        self.pen.color(color)
-
-    def changeColor(self,level):
-
-        r = min(55 + 40 * level, 255) / 255
-        g = min(155 + 20 * level, 255) / 255
-        b = 255 / 255
-        # print(f"New color: R={r * 255}, G={g * 255}, B={b * 255}")
-        self.pen.pencolor((r, g, b))
+    def changeColor(self, level):
+        r = min(55 + 40 * level, 255)
+        g = min(155 + 20 * level, 255)
+        b = 255
+        self.penColor = (r, g, b)
+        # self.pen.pencolor((r, g, b))
 
     def drawFlower(self, centerCursor, width, radius, petalNum=6):
         tempV = vector(centerCursor[0], centerCursor[1], radius, 30)
@@ -122,10 +141,23 @@ class FrostBlossom:
             self.drawFlower(beginCursor, 3, 14)
             self.drawTree(beginCursor, angle, length, level + 1)
 
+    def run(self):
+        self.tree = pygame.transform.flip(self.tree, False, True)
+        self.screen.blit(self.tree, (0, 0))
+        pygame.display.update()
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    return
+
 
 if __name__ == "__main__":
-    F = FrostBlossom(7)
+    F = FrostBlossom(5, screenWith, screenHigh)
 
-    F.drawTree(beginCursor=(0, 0), angle=90, length=200, level=0)
+    F.drawTree(
+        beginCursor=(screenWith / 2, screenHigh / 2), angle=90, length=200, level=0
+    )
+    # F.drawTree(beginCursor=(0, 0), angle=90, length=200, level=0)
 
-    turtle.done()
+    F.run()
