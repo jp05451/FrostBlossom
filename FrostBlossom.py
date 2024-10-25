@@ -55,27 +55,24 @@ class FrostBlossom:
         self.screen = pygame.display.set_mode((width, high))
 
         self.tree = pygame.Surface((width, high))
-        self.increaseButton = pygame.Surface((40, 20))
         self.drawIncreaseButton()
 
     def drawIncreaseButton(self):
-        pygame.draw.rect(self.increaseButton, (255, 255, 255), (0, 0, 40, 20))
-        pygame.draw.rect(self.increaseButton, (0, 0, 0), (0, 0, 40, 20), 1)
-        self.screen.blit(self.increaseButton, (30, 80))
- 
-    # def increaseLevel(self):
+        buttonWidth = 40
+        buttonHigh = 20
+        self.increaseButton = pygame.Surface((40, 20))
+        pygame.draw.rect(
+            self.increaseButton, (128, 128, 128), (0, 0, buttonWidth, buttonHigh)
+        )
+        pygame.draw.rect(
+            self.increaseButton, (255, 255, 255), (0, 0, buttonWidth, buttonHigh), 1
+        )
+        font = pygame.font.Font(None, 20)
+        text = font.render("+", True, (0, 0, 0))
+        text_rect = text.get_rect(center=(buttonWidth / 2, buttonHigh / 2))
+        self.increaseButton.blit(text, text_rect)
 
-    # def onButtonClick(self, x, y):
-    #     button_x, button_y = (
-    #         -self.screen.window_width() / 2 + 100,
-    #         -self.screen.window_height() / 2 + 100,
-    #     )
-    #     if button_x <= x <= button_x + 40 and button_y <= y <= button_y + 20:
-    #         self.level = (self.level + 1) % 8
-    #         print(f"Level: {self.level}")
-    #         self.pen.clear()
-    #         self.drawTree(beginCursor=(0, 0), angle=90, length=200, level=0)
-    #         self.screen.update()
+
 
     def drawVector(self, v: vector):
         pygame.draw.line(self.tree, self.penColor, v.begin(), v.getEnd())
