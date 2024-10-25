@@ -55,30 +55,15 @@ class FrostBlossom:
         self.screen = pygame.display.set_mode((width, high))
 
         self.tree = pygame.Surface((width, high))
+        self.increaseButton = pygame.Surface((40, 20))
+        self.drawIncreaseButton()
 
-    # def drawButton(self, x, y, width=40, high=20):
-    #     self.button.penup()
-    #     self.button.pencolor("white")
-    #     self.button.fillcolor("white")
-    #     self.button.goto(x, y)
-    #     self.button.pendown()
-    #     self.button.begin_fill()
-    #     self.button.goto(x + width, y)
-    #     self.button.goto(x + width, y + high)
-    #     self.button.goto(x, y + high)
-    #     self.button.goto(x, y)
-    #     self.button.end_fill()
-    #     self.button.penup()
-
-    #     # Draw button text
-    #     self.button.goto(x + width / 2, y)
-    #     self.button.pendown()
-    #     self.button.pencolor("black")
-    #     self.button.write("up", align="center", font=("Arial", 16, "normal"))
-    #     self.button.penup()
-
-    #     # # Define button click area
-    #     self.screen.onclick(self.onButtonClick)
+    def drawIncreaseButton(self):
+        pygame.draw.rect(self.increaseButton, (255, 255, 255), (0, 0, 40, 20))
+        pygame.draw.rect(self.increaseButton, (0, 0, 0), (0, 0, 40, 20), 1)
+        self.screen.blit(self.increaseButton, (30, 80))
+ 
+    # def increaseLevel(self):
 
     # def onButtonClick(self, x, y):
     #     button_x, button_y = (
@@ -107,7 +92,6 @@ class FrostBlossom:
         g = min(155 + 20 * level, 255)
         b = 255
         self.penColor = (r, g, b)
-        # self.pen.pencolor((r, g, b))
 
     def drawFlower(self, centerCursor, width, radius, petalNum=6):
         tempV = vector(centerCursor[0], centerCursor[1], radius, 30)
@@ -144,6 +128,7 @@ class FrostBlossom:
     def run(self):
         self.tree = pygame.transform.flip(self.tree, False, True)
         self.screen.blit(self.tree, (0, 0))
+        self.screen.blit(self.increaseButton, (0, 0))
         pygame.display.update()
         while True:
             for event in pygame.event.get():
