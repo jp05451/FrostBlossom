@@ -104,7 +104,7 @@ class FrostBlossom:
         r = min(55 + 40 * level, 255)
         g = min(155 + 20 * level, 255)
         b = 255
-        print(r, g, b)
+        print(f"level: {level}, {r, g, b}")
         self.penColor = (r, g, b)
 
     def drawFlower(self, centerCursor, width, radius, petalNum=6):
@@ -119,6 +119,7 @@ class FrostBlossom:
             return
 
         if level <= 4:
+            self.changeColor(level)
             tempV = vector(beginCursor[0], beginCursor[1], length, angle)
             self.drawVector(tempV)
             endCursor = tempV.getEnd()
