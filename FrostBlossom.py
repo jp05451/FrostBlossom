@@ -144,6 +144,30 @@ class FrostBlossom:
             self.drawFlower(beginCursor, 3, 14)
             self.drawTree(beginCursor, angle, length, level + 1)
 
+    def drawStar(self, centerCursor, radius=100):
+        color = (255, 255, 0)
+        points = []
+        v = vector(centerCursor[0], centerCursor[1], radius, -90)
+        for i in range(5):
+            x, y = v.getEnd()
+            points.append((x, y))
+
+            v.rotate(36)
+            v.scale(0.5)
+            x, y = v.getEnd()
+            points.append((x, y))
+
+            v.rotate(36)
+            v.scale(2)
+
+        pygame.draw.polygon(self.star, color, points)
+
+    def drawForrest(self):
+        if self.level == 8:
+            self.screen.blit(self.star, self.centerCursor)
+        for i in range(6):
+            self.drawTree((self.width // 2, self.high // 2), 90 + i * 60, 200, 0)
+
     def placeAllItems(self):
         self.tree = pygame.transform.flip(self.tree, False, True)
         self.screen.blit(self.tree, (0, 0))
