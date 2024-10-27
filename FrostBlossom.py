@@ -138,16 +138,19 @@ class FrostBlossom:
             v.rotate(72)
 
     def drawForrest(self):
+        v = vector(self.width // 2, self.high // 2, 100, 90)
+
         if self.level == 8:
             self.drawStars((self.width // 2, self.high // 2), 100)
-            v = vector(self.width // 2, self.high // 2, 100, 90)
             for i in range(6):
                 beginCursor = v.getEnd()
                 self.drawTree(beginCursor, 90 + i * 60, 200, 0)
                 v.rotate(60)
         else:
             for i in range(6):
-                self.drawTree((self.width // 2, self.high // 2), 90 + i * 60, 200, 0)
+                beginCursor = v.getEnd()
+                self.drawTree(beginCursor, 90 + i * 60, 200, 0)
+                v.rotate(60)
 
     def emptyScreen(self):
         self.tree.fill((0, 0, 0))
@@ -220,7 +223,4 @@ class FrostBlossom:
 if __name__ == "__main__":
     F = FrostBlossom(5, screenWith, screenHigh)
 
-    # F.drawTree(
-    #     beginCursor=(screenWith / 2, screenHigh / 2), angle=90, length=200, level=0
-    # )
     F.run()
