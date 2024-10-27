@@ -2,8 +2,8 @@ import pygame
 from pygame import draw
 import math
 
-screenWith = 1920 * 0.8
-screenHigh = 1080 * 0.8
+screenWith = 1920 * 0.7
+screenHigh = 1080 * 0.7
 
 
 class vector:
@@ -56,6 +56,24 @@ class FrostBlossom:
 
         self.tree = pygame.Surface((width, high))
         self.drawIncreaseButton()
+        self.drawDecreaseButton()
+
+
+
+    def drawDecreaseButton(self):
+        buttonWidth = 40
+        buttonHigh = 20
+        self.decreaseButton = pygame.Surface((40, 20))
+        pygame.draw.rect(
+            self.decreaseButton, (128, 128, 128), (0, 0, buttonWidth, buttonHigh)
+        )
+        pygame.draw.rect(
+            self.decreaseButton, (255, 255, 255), (0, 0, buttonWidth, buttonHigh), 1
+        )
+        font = pygame.font.Font(None, 20)
+        text = font.render("-", True, (0, 0, 0))
+        text_rect = text.get_rect(center=(buttonWidth / 2, buttonHigh / 2))
+        self.decreaseButton.blit(text, text_rect)
 
     def drawIncreaseButton(self):
         buttonWidth = 40
@@ -72,8 +90,6 @@ class FrostBlossom:
         text_rect = text.get_rect(center=(buttonWidth / 2, buttonHigh / 2))
         self.increaseButton.blit(text, text_rect)
 
-
-
     def drawVector(self, v: vector):
         pygame.draw.line(self.tree, self.penColor, v.begin(), v.getEnd())
 
@@ -88,17 +104,15 @@ class FrostBlossom:
         r = min(55 + 40 * level, 255)
         g = min(155 + 20 * level, 255)
         b = 255
+        print(r, g, b)
         self.penColor = (r, g, b)
 
     def drawFlower(self, centerCursor, width, radius, petalNum=6):
         tempV = vector(centerCursor[0], centerCursor[1], radius, 30)
-        self.pen.width(width)
 
         for i in range(petalNum):
             self.drawRing(tempV.getEnd(), width, radius / 2)
             tempV.rotate(360 / petalNum)
-
-        self.pen.width(1)
 
     def drawTree(self, beginCursor, angle, length, level):
         if level == self.level:
@@ -122,16 +136,67 @@ class FrostBlossom:
             self.drawFlower(beginCursor, 3, 14)
             self.drawTree(beginCursor, angle, length, level + 1)
 
-    def run(self):
+    def placeAllItems(self):
         self.tree = pygame.transform.flip(self.tree, False, True)
         self.screen.blit(self.tree, (0, 0))
-        self.screen.blit(self.increaseButton, (0, 0))
+
+        # place increase button
+        self.increaseButtonPositon = (60, self.high - 100)
+        self.screen.blit(self.increaseButton, self.increaseButtonPositon)
+
+        # place decrease button
+        self.decreaseButtonPositon = (10, self.high - 100)
+        self.screen.blit(self.decreaseButton, self.decreaseButtonPositon)
         pygame.display.update()
-        while True:
+
+    def run(self):
+        self.placeAllItems()
+        running = True
+        while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    return
+                    running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    x, y = pygame.mouse.get_pos()
+
+                    # increase button pressed
+                    if (
+                        self.increaseButtonPositon[0]
+                        <= x
+                        <= self.increaseButtonPositon[0] + 40
+                        and self.increaseButtonPositon[1]
+                        <= y
+                        <= self.increaseButtonPositon[1] + 20
+                    ):
+                        self.level = (self.level + 1) % 8
+                        self.tree.fill((0, 0, 0))
+                        self.drawTree(
+                            beginCursor=(screenWith / 2, screenHigh / 2),
+                            angle=90,
+                            length=200,
+                            level=0,
+                        )
+                        self.placeAllItems()
+                        
+                    # decrease button pressed
+                    if (
+                        self.decreaseButtonPositon[0]
+                        <= x
+                        <= self.decreaseButtonPositon[0] + 40
+                        and self.decreaseButtonPositon[1]
+                        <= y
+                        <= self.decreaseButtonPositon[1] + 20
+                    ):
+                        self.level = (self.level - 1) % 8
+                        self.tree.fill((0, 0, 0))
+                        self.drawTree(
+                            beginCursor=(screenWith / 2, screenHigh / 2),
+                            angle=90,
+                            length=200,
+                            level=0,
+                        )
+                        self.placeAllItems()
 
 
 if __name__ == "__main__":
@@ -140,6 +205,4 @@ if __name__ == "__main__":
     F.drawTree(
         beginCursor=(screenWith / 2, screenHigh / 2), angle=90, length=200, level=0
     )
-    # F.drawTree(beginCursor=(0, 0), angle=90, length=200, level=0)
-
     F.run()
