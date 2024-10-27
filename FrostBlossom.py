@@ -45,7 +45,6 @@ class vector:
 class FrostBlossom:
     def __init__(self, level=3, width=1920, high=1080):
         self.level = level
-        self.currentLevel = 0
         self.penColor = (55, 155, 255)
 
         pygame.init()
@@ -57,8 +56,16 @@ class FrostBlossom:
         self.tree = pygame.Surface((width, high))
         self.drawIncreaseButton()
         self.drawDecreaseButton()
+        self.levelDisplayBar()
 
-
+    def levelDisplayBar(self):
+        self.levelBar = pygame.Surface((90, 20))
+        pygame.draw.rect(self.levelBar, (255, 255, 255), (0, 0, 90, 20))
+        pygame.draw.rect(self.decreaseButton, (128, 128, 128), (0, 0, 90, 20), 1)
+        font = pygame.font.Font(None, 20)
+        text = font.render(str(self.level), True, (0, 0, 0))
+        text_rect = text.get_rect(center=(90 / 2, 20 / 2))
+        self.levelBar.blit(text, text_rect)
 
     def drawDecreaseButton(self):
         buttonWidth = 40
@@ -148,6 +155,14 @@ class FrostBlossom:
         # place decrease button
         self.decreaseButtonPositon = (10, self.high - 100)
         self.screen.blit(self.decreaseButton, self.decreaseButtonPositon)
+
+        # place level bar
+        self.levelDisplayBar()
+        self.screen.blit(
+            self.levelBar,
+            (self.decreaseButtonPositon[0], self.decreaseButtonPositon[1] - 30),
+        )
+
         pygame.display.update()
 
     def run(self):
@@ -179,7 +194,7 @@ class FrostBlossom:
                             level=0,
                         )
                         self.placeAllItems()
-                        
+
                     # decrease button pressed
                     if (
                         self.decreaseButtonPositon[0]
