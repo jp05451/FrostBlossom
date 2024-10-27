@@ -17,7 +17,9 @@ class FrostBlossom:
         self.width = width
         self.screen = pygame.display.set_mode((width, high))
 
-        self.tree = pygame.Surface((width, high))
+        self.tree = pygame.Surface((width, high), pygame.SRCALPHA)
+        self.star = pygame.Surface((self.width, self.high), pygame.SRCALPHA)
+
         self.drawIncreaseButton()
         self.drawDecreaseButton()
         self.levelDisplayBar()
@@ -75,7 +77,6 @@ class FrostBlossom:
         r = min(55 + 40 * level, 255)
         g = min(155 + 20 * level, 255)
         b = 255
-        print(f"level: {level}, {r, g, b}")
         self.penColor = (r, g, b)
 
     def drawFlower(self, centerCursor, width, radius, petalNum=6):
@@ -133,6 +134,9 @@ class FrostBlossom:
             self.drawTree((self.width // 2, self.high // 2), 90 + i * 60, 200, 0)
 
     def placeAllItems(self):
+        self.drawForrest()
+        self.screen.fill((0, 0, 0))
+
         self.tree = pygame.transform.flip(self.tree, False, True)
         self.screen.blit(self.tree, (0, 0))
 
