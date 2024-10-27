@@ -1,6 +1,6 @@
 import pygame
 from pygame import draw
-import math
+from vector import vector
 
 screenWith = 1920 * 0.7
 screenHigh = 1080 * 0.7
@@ -10,6 +10,8 @@ class FrostBlossom:
     def __init__(self, level=3, width=1920, high=1080):
         self.level = level
         self.penColor = (55, 155, 255)
+        self.maxLevel = 9
+        self.centerCursor = (width / 2, high / 2)
 
         pygame.init()
         pygame.display.set_caption("FrostBlossom")
@@ -22,6 +24,7 @@ class FrostBlossom:
 
         self.drawIncreaseButton()
         self.drawDecreaseButton()
+        self.drawStar(self.centerCursor, 200)
         self.levelDisplayBar()
 
     def levelDisplayBar(self):
@@ -177,7 +180,7 @@ class FrostBlossom:
                         <= y
                         <= self.increaseButtonPositon[1] + 20
                     ):
-                        self.level = (self.level + 1) % 8
+                        self.level = (self.level + 1) % self.maxLevel
                         self.tree.fill((0, 0, 0))
                         self.drawTree(
                             beginCursor=(screenWith / 2, screenHigh / 2),
@@ -196,7 +199,7 @@ class FrostBlossom:
                         <= y
                         <= self.decreaseButtonPositon[1] + 20
                     ):
-                        self.level = (self.level - 1) % 8
+                        self.level = (self.level - 1) % self.maxLevel
                         self.tree.fill((0, 0, 0))
                         self.drawTree(
                             beginCursor=(screenWith / 2, screenHigh / 2),
@@ -210,7 +213,7 @@ class FrostBlossom:
 if __name__ == "__main__":
     F = FrostBlossom(5, screenWith, screenHigh)
 
-    F.drawTree(
-        beginCursor=(screenWith / 2, screenHigh / 2), angle=90, length=200, level=0
-    )
+    # F.drawTree(
+    #     beginCursor=(screenWith / 2, screenHigh / 2), angle=90, length=200, level=0
+    # )
     F.run()
