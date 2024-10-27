@@ -2,8 +2,8 @@ import pygame
 from pygame import draw
 from vector import vector
 
-screenWith = 1920 * 0.7
-screenHigh = 1080 * 0.7
+screenWith = 1920
+screenHigh = 1080
 
 
 class FrostBlossom:
@@ -20,11 +20,10 @@ class FrostBlossom:
         self.screen = pygame.display.set_mode((width, high))
 
         self.tree = pygame.Surface((width, high), pygame.SRCALPHA)
-        self.star = pygame.Surface((self.width, self.high), pygame.SRCALPHA)
+        self.star = pygame.Surface((width, high), pygame.SRCALPHA)
 
         self.drawIncreaseButton()
         self.drawDecreaseButton()
-        self.drawStar(self.centerCursor, 200)
         self.levelDisplayBar()
 
     def levelDisplayBar(self):
@@ -115,7 +114,7 @@ class FrostBlossom:
     def drawStar(self, centerCursor, radius=100):
         color = (255, 255, 0)
         points = []
-        v = vector(centerCursor[0], centerCursor[1], radius, -90)
+        v = vector(centerCursor[0], centerCursor[1], radius, 270)
         for i in range(5):
             x, y = v.getEnd()
             points.append((x, y))
@@ -130,18 +129,34 @@ class FrostBlossom:
 
         pygame.draw.polygon(self.star, color, points)
 
+    def drawStars(self, centerCursor, radius=100):
+        self.star = pygame.surface.Surface((self.width, self.high), pygame.SRCALPHA)
+        self.drawStar(centerCursor, radius)
+        v = vector(centerCursor[0], centerCursor[1], radius * 0.7, 90)
+        for i in range(5):
+            self.drawStar(v.getEnd(), radius * 0.1)
+            v.rotate(72)
+
     def drawForrest(self):
         if self.level == 8:
-            self.screen.blit(self.star, self.centerCursor)
-        for i in range(6):
-            self.drawTree((self.width // 2, self.high // 2), 90 + i * 60, 200, 0)
+            self.drawStars((self.width // 2, self.high // 2), 100)
+            v = vector(self.width // 2, self.high // 2, 100, 90)
+            for i in range(6):
+                beginCursor = v.getEnd()
+                self.drawTree(beginCursor, 90 + i * 60, 200, 0)
+                v.rotate(60)
+        else:
+            for i in range(6):
+                self.drawTree((self.width // 2, self.high // 2), 90 + i * 60, 200, 0)
+
+    def emptyScreen(self):
+        self.tree.fill((0, 0, 0))
+        self.star.fill((0, 0, 0, 0))
 
     def placeAllItems(self):
-        self.drawForrest()
-        self.screen.fill((0, 0, 0))
-
         self.tree = pygame.transform.flip(self.tree, False, True)
         self.screen.blit(self.tree, (0, 0))
+        self.screen.blit(self.star, (0, 0))
 
         # place increase button
         self.increaseButtonPositon = (60, self.high - 100)
@@ -152,7 +167,6 @@ class FrostBlossom:
         self.screen.blit(self.decreaseButton, self.decreaseButtonPositon)
 
         # place level bar
-        self.levelDisplayBar()
         self.screen.blit(
             self.levelBar,
             (self.decreaseButtonPositon[0], self.decreaseButtonPositon[1] - 30),
@@ -161,6 +175,7 @@ class FrostBlossom:
         pygame.display.update()
 
     def run(self):
+        self.drawForrest()
         self.placeAllItems()
         running = True
         while running:
@@ -181,13 +196,9 @@ class FrostBlossom:
                         <= self.increaseButtonPositon[1] + 20
                     ):
                         self.level = (self.level + 1) % self.maxLevel
-                        self.tree.fill((0, 0, 0))
-                        self.drawTree(
-                            beginCursor=(screenWith / 2, screenHigh / 2),
-                            angle=90,
-                            length=200,
-                            level=0,
-                        )
+                        self.emptyScreen()  # clear screen
+                        self.levelDisplayBar()
+                        self.drawForrest()
                         self.placeAllItems()
 
                     # decrease button pressed
@@ -200,13 +211,9 @@ class FrostBlossom:
                         <= self.decreaseButtonPositon[1] + 20
                     ):
                         self.level = (self.level - 1) % self.maxLevel
-                        self.tree.fill((0, 0, 0))
-                        self.drawTree(
-                            beginCursor=(screenWith / 2, screenHigh / 2),
-                            angle=90,
-                            length=200,
-                            level=0,
-                        )
+                        self.emptyScreen()  # clear screen
+                        self.levelDisplayBar()
+                        self.drawForrest()
                         self.placeAllItems()
 
 
